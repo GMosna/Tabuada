@@ -1,30 +1,67 @@
 import React, { useState } from "react";
 
-function Tabuada() {
-  const [numero, setNumero] = useState(""); 
+
+function App() {
+  const [numero, setNumero] = useState("");
+  const [tabuada, setTabuada] = useState("");
+  const [respostas, setRespostas] = useState([]);
+  const [resultados, setResultados] = useState([]);
 
   const gerarTabuada = () => {
-    const num = (numero);
-    return Array.from({ length: 10 }, (_, i) => `${num} x ${i + 1} = ${num * (i + 1)}`);
+    const novaTabuada = Array.from({ length: 10 }, (_,i) => ({
+      pergunta: `${numero} x ${i + 1}`,
+      resultado: (i + 1) * numero
+    
+  }));
+    setTabuada(novaTabuada);
+    setRespostas(Array(10).fill("")); 
+    setResultados(Array(10).fill("")); 
+  };
+
+  const validarRespostas = () => {
+    const novosResultados = tabuada.map((item, i) => 
+      item.resultado === parseInt(respostas[i]) ? "Correto" : "Errado"
+    );
+    setResultados(novosResultados);
+  };
+
+  const handleChangeResposta = (index, value) => {
+    const novasRespostas = [...respostas];
+    novasRespostas[index] = value;
+    setRespostas(novasRespostas);
   };
 
   return (
-    <div>
+    <div className="App">
       <h1>Gerador de Tabuada</h1>
-      <label htmlFor="numero">Digite o número da tabuada: </label>
       <input
-        id="numero"
         type="number"
         value={numero}
         onChange={(e) => setNumero(e.target.value)}
       />
-      <ul>
-        {gerarTabuada().map((linha, index) => (
-          <li key={index}>{linha}</li>
-        ))}
-      </ul>
+      <button onClick={gerarTabuada}>Gerar Tabuada</button>
+
+      {tabuada.length > 0 && (
+        <>
+          <ul>
+            {tabuada.map((item, i) => (
+              <li key={i}>
+                {item.pergunta} = 
+                <input
+                  type="number"
+                  value={respostas[i]}
+                  onChange={(e) => handleChangeResposta(i, e.target.value)}
+                />
+                {resultados[i] && <span> {resultados[i]}</span>}
+              </li>
+            ))}
+          </ul>
+          <button onClick={validarRespostas}>Validar Respostas</button>
+        </>
+      )}
     </div>
   );
 }
 
-export default Tabuada;
+export default App;
+
